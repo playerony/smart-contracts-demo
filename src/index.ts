@@ -32,7 +32,7 @@ const run = async () => {
   const counterContract = new ethers.Contract(
     process.env.CONTRACT_ADDRESS,
     ['function count() public', 'function getCounter() public view returns (uint32)'],
-    new ethers.providers.Web3Provider(getEthereum()),
+    new ethers.providers.Web3Provider(getEthereum()).getSigner(),
   );
 
   const element = document.createElement('div');
@@ -41,7 +41,8 @@ const run = async () => {
   const buttonElement = document.createElement('button');
   buttonElement.innerText = 'increment';
   buttonElement.onclick = async () => {
-    await counterContract.count();
+    const transaction = await counterContract.count();
+    await transaction.wait();
 
     element.innerHTML = await counterContract.getCounter();
   };
