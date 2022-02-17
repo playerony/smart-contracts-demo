@@ -11,7 +11,9 @@ async function deploy() {
 
 // @ts-ignore
 async function count(counterContract) {
-  return await counterContract.count();
+  await counterContract.count();
+
+  console.log('Counter', await counterContract.getCounter());
 }
 
 deploy().then(count);

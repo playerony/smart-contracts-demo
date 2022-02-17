@@ -29,13 +29,25 @@ const run = async () => {
     throw new Error('[metamask] cannot find any accounts');
   }
 
-  const test = new ethers.Contract(
-    '0x5fbdb2315678afecb367f032d93f642f64180aa3',
-    ['function test() public pure returns (string memory)'],
+  const counterContract = new ethers.Contract(
+    process.env.CONTRACT_ADDRESS,
+    ['function count() public', 'function getCounter() public view returns (uint32)'],
     new ethers.providers.Web3Provider(getEthereum()),
   );
 
-  document.body.innerHTML = await test.test();
+  const element = document.createElement('div');
+  element.innerHTML = await counterContract.getCounter();
+
+  const buttonElement = document.createElement('button');
+  buttonElement.innerText = 'increment';
+  buttonElement.onclick = async () => {
+    await counterContract.count();
+
+    element.innerHTML = await counterContract.getCounter();
+  };
+
+  document.body.appendChild(element);
+  document.body.appendChild(buttonElement);
 };
 
 run();
